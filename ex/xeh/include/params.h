@@ -1,0 +1,1 @@
+#define missionParam(name) [name] call EX_fnc_getMissionParam

@@ -1,0 +1,60 @@
+//#include "x_avd\include\avd.h"
+//#include "x_avd\params.ext"
+//#include "x_avd\defines.hpp"
+//#include "x_avd\dialogs\include.hpp"
+
+joinUnassigned = 1;
+author = "Rush & Ahab ";
+OnLoadName = "EvolutionX";
+onLoadIntroTime = false;
+onLoadMissionTime = false;
+class Header
+{
+	gameType = Coop;
+	minPlayers = 1;
+	maxPlayers = 40;
+};
+
+Respawn = "BASE";
+respawndelay = 6;
+RespawnDialog = 1;
+disabledAI = 1;
+saving = 0;
+
+enableItemsDropping = 0;
+
+class Extended_PreInit_EventHandlers 
+{
+  	      xeh_init =  "call compileFinal preprocessFileLineNumbers 'ex\preinit.sqf';";
+};
+
+class Extended_Init_EventHandlers 
+{
+	  onRespawn = true;
+	  //xeh_init = "_this call compile preprocessFileLineNumbers 'x_avd\xeh\init.sqf';";  	
+      class Man 
+      {
+      	  onRespawn = true;
+          xeh_init = "_this call compile preprocessfilelinenumbers 'ex\xeh\unit.sqf';"; 
+      };
+      
+      class Land 
+      {
+      	  onRespawn = true;
+          xeh_init = "_this execVM 'x_avd\xeh\land.sqf';";
+          
+          class Car 
+	      {
+	      	  onRespawn = true;
+	          xeh_init = "_this execVM 'x_avd\xeh\car.sqf';"; 
+	      };
+	      class Tank 
+	      {
+	          //onRespawn = true;
+	          //xeh_init = ""; 
+	      };
+           
+      };
+      
+};
+
