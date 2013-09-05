@@ -8,9 +8,22 @@
 	_localTo = PARAM(2, { nil }); // run everywhere if localTo is nil.
 	_callback = PARAM(3, { nil });
 	
-	if(! isNil "_localTo") then {
-		if(! local _localTo) exitWith {}; // not for me.
-	};
+
+	switch(typeName _localTo) do {
+      case "OBJECT": {
+      		if(! local _localTo) exitWith {};  
+      };
+      
+      case "CODE": {
+        _res = call _localTo;
+      	if(! _res) exitWith {};  
+      };
+      
+      case "BOOL": {
+        if(!_localTo) exitWith {};  
+      };
+    };
+
 	
 	// call the code.
 	_call = _arguments call _code;
@@ -35,26 +48,16 @@
 EX_fnc_MPexec = {
 	private ["_code", "_arguments", "_localTo", "_callback", "_runLocal", "_ret", "_call"];
 	_code = PARAM(0, {});
-	_arguments = PARAM(1, { [] });
-	_localTo = PARAM(2, { nil });
-	_callback = PARAM(3, { nil });
-	_runLocal = PARAM(3, { true });
+	_arguments = PARAM(1, []);
+	_localTo = PARAM(2, false);
+	_callback = PARAM(3, false);
+	_runLocal = PARAM(4, true);
 	_ret = nil;
 	EX_RPC_CALL = [_code, _arguments, _localTo, _callback];
 	publicVariable "EX_RPC_CALL";
 	
 	if(_runLocal) then {
-		if(! isNil "_localTo") then {
-			if(! local _localTo) exitWith {};
-		};
-		
 		_call = _arguments call _code;
-		
-		if(! isNil "_callback") then {
-			// send return value to callback variable
-			call compile format["%1 = %2;", _callback, _call];
-		};
 	};
-	_ret;
-	
+
 };

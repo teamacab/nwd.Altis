@@ -4,11 +4,17 @@ class Mission
 	addOns[]=
 	{
 		"a3_map_altis",
-		"A3_Characters_F_BLUFOR"
+		"A3_Characters_F_BLUFOR",
+		"A3_Weapons_F_Ammoboxes",
+		"a3_weapons_f_beta_ammoboxes",
+		"A3_Static_F_Gamma"
 	};
 	addOnsAuto[]=
 	{
 		"A3_Characters_F_BLUFOR",
+		"A3_Weapons_F_Ammoboxes",
+		"a3_weapons_f_beta_ammoboxes",
+		"A3_Static_F_Gamma",
 		"a3_map_altis"
 	};
 	randomSeed=2374382;
@@ -52,6 +58,42 @@ class Mission
 					skill=0.60000002;
 				};
 			};
+		};
+	};
+	class Vehicles
+	{
+		items=4;
+		class Item0
+		{
+			position[]={14627.927,17.91,16763.906};
+			id=1;
+			side="EMPTY";
+			vehicle="Box_IND_Ammo_F";
+			skill=0.60000002;
+		};
+		class Item1
+		{
+			position[]={14631.379,17.91,16764.961};
+			id=2;
+			side="EMPTY";
+			vehicle="Box_IND_Wps_F";
+			skill=0.60000002;
+		};
+		class Item2
+		{
+			position[]={14634.544,17.91,16765.152};
+			id=3;
+			side="EMPTY";
+			vehicle="Box_IND_AmmoOrd_F";
+			skill=0.60000002;
+		};
+		class Item3
+		{
+			position[]={14631.915,17.91,16760.744};
+			id=4;
+			side="EMPTY";
+			vehicle="B_HMG_01_high_weapon_F";
+			skill=0.60000002;
 		};
 	};
 };

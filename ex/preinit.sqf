@@ -6,7 +6,11 @@
 
 // loading common functions
 COMPF("common\fnc\init.sqf");
-COMPF("expy\init.sqf");
+COMPF("expy\common.sqf");
+
+if(isServer) then {
+	COMPF("expy\init.sqf");
+};
 
 // send CBA local event on every frame.
 onEachFrame {

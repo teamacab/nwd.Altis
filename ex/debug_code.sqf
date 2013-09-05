@@ -13,11 +13,21 @@ _result = ("Arma2Net.Unmanaged" callExtension "py ex.createUnit('test')");
 
 
 
-_result = ["version"] call EX_py_call;
-_result = PY("ex.version()")
+//_result = ["version"] call EX_py_call;
+_result = PY("ex.version()");
+
+for "_i" from 0 to 100 do {
+	_unit = (group player) createUnit["C_man_1", getPos player, [], 0, "none"];
+	_unit setVehicleVarName format["autogen_%1", _i];
+};
+
+//_str = format["ex.savePlayers()", diag_frameno];
+_str = format["ex.a('%1')", player];
+_result = PY(_str);
+
 //_result = PY("import sys; sys.path = ['.', 'D:\\SteamLibrary\\SteamApps\\common\\Arma 3\\@Arma2Net\\Lib', 'D:\\SteamLibrary\\SteamApps\\common\\Arma 3\\@Arma2Net\\DLLs', 'D:\\SteamLibrary\\SteamApps\\common\\Arma 3\\@Arma2Net\\Python', 'D:\\SteamLibrary\\SteamApps\\common\\Arma 3\\@Arma2Net\\Python\\Lib']; import ex");
 DLOG(_result);
-hint format["res: %1", _result];
+//hint format["res: %1", _result];
 
 //_unit = (group player) createUnit["C_man_1", getPos player, [], 0, "none"];
 /*

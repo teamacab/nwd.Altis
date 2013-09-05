@@ -8,6 +8,7 @@
  * provides several functions to cross-communicate with python modules,
  * mainly using the ex module.
  */
+if(!isServer) exitWith {};
 #define SELF "ex\expy\init.sqf"
 #define PATH "ex\expy"
 #include "include\ex.h"
@@ -50,8 +51,28 @@ DLOG("EXPY " + str(_expyVersion) + " loaded.");
 	private ["_player"];
 	_player = _this select 0;
 	_py = format["ex.loadPlayer('%2', '%1')", getPlayerUID _player, netid _player];
-	_res = PY(_py);
+	PY(_py);
+    
+    [{
+        DLOG("Starting DataUpdater");
+        [player, "Player"] spawn EX_fnc_DataUpdater;
+    },[], _player] call EX_fnc_MPexec;
+    
 	
+}] call CBA_fnc_addEventHandler;
+
+/**
+ * Restore unit
+ */
+["ex_unit_create_post", {
+    private ["_unit", "_var"];
+    _unit = _this select 0;
+    if(isPlayer _unit) exitWith {};
+    _var = vehicleVarName _unit;
+    if(_var == "") exitWith {};
+    //_str = format["ex.loadUnit('%1', '%2')", netid _unit, _var];
+    //_res = PY(_str);
+    //[_unit, "Unit"] spawn EX_fnc_DataUpdater;
 }] call CBA_fnc_addEventHandler;
 
 /**
@@ -124,7 +145,12 @@ EX_py_createUnit = {
 	
 };
 
-
+EX_fnc_RPY = {
+  	private ["_code"];
+  	_code = _this select 0;
+  
+    [{ ("Arma2Net.Unmanaged" callExtension format["py %1", _this]) }, _code, { isServer }] call EX_fnc_MPexec;  
+};
 
 
 
@@ -135,11 +161,11 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 	waitUntil {
 		_next = PY("RVEngine.next()");
         if(_next != "0") then {
-	        DLOG(_next);
+	        //DLOG(_next);
             _next = call compile _next;
-            DLOG(_next);
+            //DLOG(_next);
 	        _spl = [_next, ":\x000:"] call CBA_fnc_split;
-	        DLOG(str(_spl))
+	        //DLOG(str(_spl))
 	        if(count(_spl) == 3) then {
 		        _tid = _spl select 0;
 		        _cmd = _spl select 1;
@@ -154,15 +180,21 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 		            };
 		            case '\x01': {
 		                // end
-                        DLOG("END!!!");
+                       // DLOG("END!!!");
 		                _list = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
 		                _code = [_list, ""] call CBA_fnc_join;
-                        DLOG(_code);
+                        //DLOG(_code);
                        
 		                [_code, _callback] spawn {
+                            //DLOG(str(_this));
 		                	private ["_code", "_callback", "_result", "_py"];
 		                    _code = _this select 0;
 		                    _callback = _this select 1;
+                            //DLOG(_code);
+                            
+                            // damn CBA.
+                            _code = [_code, ",any", ",nil"] call CBA_fnc_replace;
+                            
 		                    _result = call compile _code;
 		                    if(_callback == "") exitWith {};
 
@@ -171,7 +203,7 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 							PY(_py);  
 
 		                };
-                       	DLOG(str(_tid) + " executed.");
+                       	//DLOG(str(_tid) + " executed.");
 		                [WORKER_QUEUE, _tid, nil] call CBA_fnc_hashSet;
 		            };
 		            
@@ -213,3 +245,6 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 		false;
 	};
 };
+
+EXPY_INIT=true;
+publicVariable "EXPY_INIT";
