@@ -8,6 +8,7 @@
 COMPF("common\fnc\init.sqf");
 COMPF("expy\init.sqf");
 
+// send CBA local event on every frame.
 onEachFrame {
 	["onEachFrame", _this] call CBA_fnc_localEvent;
 };
