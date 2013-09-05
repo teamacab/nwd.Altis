@@ -1,11 +1,6 @@
-//#include "x_avd\include\avd.h"
-//#include "x_avd\params.ext"
-//#include "x_avd\defines.hpp"
-//#include "x_avd\dialogs\include.hpp"
-
 joinUnassigned = 1;
-author = "Rush & Ahab ";
-OnLoadName = "EvolutionX";
+author = "Team A.C.A.B.";
+OnLoadName = "New World Disorder";
 onLoadIntroTime = false;
 onLoadMissionTime = false;
 class Header
@@ -20,9 +15,12 @@ respawndelay = 6;
 RespawnDialog = 1;
 disabledAI = 1;
 saving = 0;
-
 enableItemsDropping = 0;
 
+
+/**
+ *  Set CBA XEH Events.
+ */
 class Extended_PreInit_EventHandlers 
 {
   	      xeh_init =  "call compileFinal preprocessFileLineNumbers 'ex\preinit.sqf';";

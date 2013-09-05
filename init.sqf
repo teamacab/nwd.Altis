@@ -1,19 +1,3 @@
-
-/*
-  Script by Sickboy (sb _at_ 6thSense.eu)
-  Version: v0.1
-  Conditions to use:
-
-    SinglePlayer: !T_MP
-    MultiPlayer: T_MP
-    Dedicated Server: T_Server && !T_Client
-    Dedicated Server or ServerClient: T_Server
-    ClientOnly: T_Client && !T_Server
-    Client or ServerClient: T_Client
-    Client or ServerClient, NOT JIP: T_Client && !T_JIP
-    JIP Client: T_JIP 
-
-*/
 onPlayerConnected "[_id, _name] execVM ""ex\onPlayerConnected.sqf""";
 onPlayerDisconnected "[_id, _name] call compile preprocessFileLineNumbers ""ex\onPlayerDisconnected.sqf""";
 
@@ -39,6 +23,7 @@ if (isServer) then
   };
 };
 
+// init ex
 call compileFinal preprocessFileLineNumbers "ex\init.sqf";
 
 finishMissionInit;
