@@ -15,6 +15,9 @@
 
 private ["_expyVersion"];
 
+EX_fnc_getLoadOut = compileFinal preprocessFileLineNumbers "ex\expy\ext\AEROSON_fnc_getLoadout.sqf";
+EX_fnc_setLoadOut = compileFinal preprocessFileLineNumbers "ex\expy\ext\AEROSON_fnc_setLoadout.sqf";
+
 // ensure the arma2net python vm is 'fresh'
 ("Arma2Net.Unmanaged" callExtension "Unload");
 ("Arma2Net.Unmanaged" callExtension "Load");
@@ -131,47 +134,57 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 [] spawn {
 	waitUntil {
 		_next = PY("RVEngine.next()");
-        DLOG(_next);
-        _spl = [_next, ":\0000:"] call CBA_fnc_split;
-        DLOG(str(_spl))
-        _tid = _spl select 0;
-        _cmd = _spl select 1;
-        _line = _spl select 2;
-        _callback = nil;
-        switch(_cmd) do {
-        	case '\000': {
-                // begin
-                _callback = _line;
-                [WORKER_QUEUE, _tid, []] call CBA_fnc_hashSet;
-            };
-            case '\001': {
-                // end
-                _list = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
-                _code = [_list, ""] call CBA_fnc_join;
-                [_code, _callback] spawn {
-                	private ["_code", "_callback", "_result", "_py"];
-                    _code = _this select 0;
-                    _callback = _this select 1;
-                    _result = call compile _code;
-                    if(! isNil "_callback") then {
-                        if(_callback == "") exitWith {};
-                    	_py = format["%1('%2')", _callback, _result];
-						//DLOG("Sending callback");c
-						PY(_py);  
-                    };
-                };
-                [WORKER_QUEUE, _tid, nil] call CBA_fnc_hashSet;
-            };
-            
-            case '\030': {
-            	// add to queue  
-                _list = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
-                _list = _list + [_line];
-                [WORKER_QUEUE, _tid, _list] call CBA_fnc_hashSet;
-            };
-                
+        if(_next != "0") then {
+	        DLOG(_next);
+            _next = call compile _next;
+            DLOG(_next);
+	        _spl = [_next, ":\x000:"] call CBA_fnc_split;
+	        DLOG(str(_spl))
+	        if(count(_spl) == 3) then {
+		        _tid = _spl select 0;
+		        _cmd = _spl select 1;
+		        _line = _spl select 2;
+		        _callback = "";
+               
+		        switch(_cmd) do {
+		        	case '\x00': {
+		                // begin
+		                _callback = _line;
+		                [WORKER_QUEUE, _tid, []] call CBA_fnc_hashSet;
+		            };
+		            case '\x01': {
+		                // end
+                        DLOG("END!!!");
+		                _list = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
+		                _code = [_list, ""] call CBA_fnc_join;
+                        DLOG(_code);
+                       
+		                [_code, _callback] spawn {
+		                	private ["_code", "_callback", "_result", "_py"];
+		                    _code = _this select 0;
+		                    _callback = _this select 1;
+		                    _result = call compile _code;
+		                    if(_callback == "") exitWith {};
+
+	                    	_py = format["%1('%2')", _callback, _result];
+							//DLOG("Sending callback");c
+							PY(_py);  
+
+		                };
+                       	DLOG(str(_tid) + " executed.");
+		                [WORKER_QUEUE, _tid, nil] call CBA_fnc_hashSet;
+		            };
+		            
+		            case '\x18': {
+		            	// add to queue  
+		                _list = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
+		                _list = _list + [_line];
+		                [WORKER_QUEUE, _tid, _list] call CBA_fnc_hashSet;
+		            };
+		                
+		        };
+	        };
         };
-        
         /*
 		_res = call compile _next;
 		
