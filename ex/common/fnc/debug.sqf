@@ -30,3 +30,8 @@ EX_fnc_log = {
         
 };
 
+EX_fnc_dump = {
+  private ["_object"];
+  _object = PARAM(0, nil);
+    
+};

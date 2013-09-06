@@ -7,7 +7,8 @@ class Mission
 		"A3_Characters_F_BLUFOR",
 		"A3_Weapons_F_Ammoboxes",
 		"a3_weapons_f_beta_ammoboxes",
-		"A3_Static_F_Gamma"
+		"A3_Static_F_Gamma",
+		"A3_Soft_F_Car"
 	};
 	addOnsAuto[]=
 	{
@@ -15,6 +16,7 @@ class Mission
 		"A3_Weapons_F_Ammoboxes",
 		"a3_weapons_f_beta_ammoboxes",
 		"A3_Static_F_Gamma",
+		"A3_Soft_F_Car",
 		"a3_map_altis"
 	};
 	randomSeed=2374382;
@@ -40,7 +42,7 @@ class Mission
 	};
 	class Groups
 	{
-		items=1;
+		items=2;
 		class Item0
 		{
 			side="WEST";
@@ -59,14 +61,32 @@ class Mission
 				};
 			};
 		};
+		class Item1
+		{
+			side="WEST";
+			class Vehicles
+			{
+				items=1;
+				class Item0
+				{
+					position[]={14704.095,17.91,16679.809};
+					id=1;
+					side="WEST";
+					vehicle="B_Soldier_F";
+					player="PLAY CDG";
+					leader=1;
+					skill=0.60000002;
+				};
+			};
+		};
 	};
 	class Vehicles
 	{
-		items=4;
+		items=5;
 		class Item0
 		{
 			position[]={14627.927,17.91,16763.906};
-			id=1;
+			id=2;
 			side="EMPTY";
 			vehicle="Box_IND_Ammo_F";
 			skill=0.60000002;
@@ -74,7 +94,7 @@ class Mission
 		class Item1
 		{
 			position[]={14631.379,17.91,16764.961};
-			id=2;
+			id=3;
 			side="EMPTY";
 			vehicle="Box_IND_Wps_F";
 			skill=0.60000002;
@@ -82,7 +102,7 @@ class Mission
 		class Item2
 		{
 			position[]={14634.544,17.91,16765.152};
-			id=3;
+			id=4;
 			side="EMPTY";
 			vehicle="Box_IND_AmmoOrd_F";
 			skill=0.60000002;
@@ -90,9 +110,17 @@ class Mission
 		class Item3
 		{
 			position[]={14631.915,17.91,16760.744};
-			id=4;
+			id=5;
 			side="EMPTY";
 			vehicle="B_HMG_01_high_weapon_F";
+			skill=0.60000002;
+		};
+		class Item4
+		{
+			position[]={14620.48,17.91,16726.527};
+			id=6;
+			side="EMPTY";
+			vehicle="C_Hatchback_01_sport_F";
 			skill=0.60000002;
 		};
 	};

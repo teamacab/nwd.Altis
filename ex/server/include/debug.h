@@ -9,8 +9,10 @@
 	
 	#ifndef NODEBUG
 		//#define DLOG(lmessage) diag_log format["%5|%4 %1:%2 %3", _SELF, __LINE__, str(lmessage), diag_frameno, time]; player globalChat str(lmessage)
-		#define DLOG(lmessage) [lmessage, _SELF, __LINE__, 7] call EX_fnc_log;
+		#define DLOG(lmessage) [lmessage, _SELF, __LINE__, 7] call EX_fnc_log
 	#else
 		#define DLOG(lmessage) true
 	#endif
 #endif
+
+#define DUMP(object) [object] call EX_fnc_dump

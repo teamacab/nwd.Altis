@@ -69,7 +69,19 @@ DLOG("EXPY " + str(_expyVersion) + " loaded.");
     _unit = _this select 0;
     if(isPlayer _unit) exitWith {};
     _var = vehicleVarName _unit;
-    if(_var == "") exitWith {};
+    if(_var == "") exitWith {
+        /*
+        _f = "";
+        if(isPlayer _unit) then {
+            _f = format["player_%1", getPlayerUID _unit];
+        } else {
+            _f = PY("ex.uuid()");
+        };
+        DLOG("VARNAME: " + str(_f));
+        _unit setVehicleVarName _f;
+        call compile format["%1 = _unit; publicVariable ""%1"";", _f];
+        */
+    };
     //_str = format["ex.loadUnit('%1', '%2')", netid _unit, _var];
     //_res = PY(_str);
     //[_unit, "Unit"] spawn EX_fnc_DataUpdater;
@@ -152,7 +164,12 @@ EX_fnc_RPY = {
     [{ ("Arma2Net.Unmanaged" callExtension format["py %1", _this]) }, _code, { isServer }] call EX_fnc_MPexec;  
 };
 
+EX_fnc_PY = {
+    private ["_code"];
+  	_code = _this select 0;
 
+    ("Arma2Net.Unmanaged" callExtension format["py %1", _code])
+};
 
 // spawn queue worker
 WORKER_QUEUE = [] call CBA_fnc_hashCreate;
@@ -245,6 +262,53 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 		false;
 	};
 };
+
+// update units, vehicles, statics
+[] spawn {
+	waitUntil { time > 0};
+    
+    	// load world.
+        PY("ex.loadWorld()");
+        _updateUnit = {
+	      private ["_unit", "_key", "_value"];
+	      _unit = _this select 0;
+	      _key = _this select 1;
+	      _value = _this select 2;
+          DLOG("Updating " + str(_unit) + ", key: " + str(_key) + ", value: " + str(_value));
+	      _py = format["ex.getUnit('%1', '%2').%3 = '%4'", netid _unit, vehicleVarName _unit, _key, _value];
+          DLOG(str(_py));
+          PY(_py);  
+          sleep 0.01;
+	      
+    	};    
+	waitUntil {
+      	{
+
+            _var = vehicleVarName _x;
+            _netid = _x;
+            if(_var != "" and !isPlayer _x) then {
+            	
+                [_netid, "posATL", getPosATL _x] call _updateUnit;
+                [_netid, "posASL", getPosASL _x] call _updateUnit;
+                _loadout = [_x] call EX_fnc_getLoadOut;
+                [_netid, "loadout", _loadout] call _updateUnit;
+                [_netid, "damage", damage _x] call _updateUnit;
+                [_netid, "dir", getDir _x] call _updateUnit;
+                [_netid, "animation", animationState _x] call _updateUnit;
+                [_netid, "side", side _x] call _updateUnit;
+                [_netid, "rank", rank _x] call _updateUnit;
+                [_netid, "skill", skill _x] call _updateUnit;
+                [_netid, "alive", alive _x] call _updateUnit;
+                [_netid, "clazz", typeOf _x] call _updateUnit;
+            };
+            sleep 0.01;
+        } foreach allUnits;
+      
+      	sleep 60;
+        false;  
+    };
+};
+
 
 EXPY_INIT=true;
 publicVariable "EXPY_INIT";

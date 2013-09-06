@@ -39,12 +39,12 @@ class Extended_Init_EventHandlers
       class Land 
       {
       	  onRespawn = true;
-          xeh_init = "_this execVM 'x_avd\xeh\land.sqf';";
+          //xeh_init = "_this execVM 'ex\xeh\land.sqf';";
           
           class Car 
 	      {
 	      	  onRespawn = true;
-	          xeh_init = "_this execVM 'x_avd\xeh\car.sqf';"; 
+	          //xeh_init = "_this execVM 'x_avd\xeh\car.sqf';"; 
 	      };
 	      class Tank 
 	      {
