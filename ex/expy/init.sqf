@@ -16,8 +16,7 @@ if(!isServer) exitWith {};
 
 private ["_expyVersion"];
 
-EX_fnc_getLoadOut = compileFinal preprocessFileLineNumbers "ex\expy\ext\AEROSON_fnc_getLoadout.sqf";
-EX_fnc_setLoadOut = compileFinal preprocessFileLineNumbers "ex\expy\ext\AEROSON_fnc_setLoadout.sqf";
+
 
 // ensure the arma2net python vm is 'fresh'
 ("Arma2Net.Unmanaged" callExtension "Unload");
@@ -50,16 +49,30 @@ DLOG("EXPY " + str(_expyVersion) + " loaded.");
 	if(!isServer) exitWith {};
 	private ["_player"];
 	_player = _this select 0;
+    if(isNil "_player" or isNull _player) exitWith { DLOG("Nil or Null player."); };
 	_py = format["ex.loadPlayer('%2', '%1')", getPlayerUID _player, netid _player];
-	PY(_py);
-    
-    [{
+	[_py] call EX_fnc_PY;    
+	[{
         DLOG("Starting DataUpdater");
-        [player, "Player"] spawn EX_fnc_DataUpdater;
-    },[], _player] call EX_fnc_MPexec;
+        [_this, "Player"] spawn EX_fnc_DataUpdater;
+    }, _player, _player] call EX_fnc_MPexec;
     
 	
 }] call CBA_fnc_addEventHandler;
+
+["ex_network_opd", {
+	if(!isServer) exitWith {};
+	private ["_player"];
+    DLOG(str(_this));
+	_player = _this select 0;
+    _uid = _this select 1;
+    _uid = vehicleVarName _player;
+	_py = format["ex.getPlayerByVarname('%1').update()", _uid];
+    DLOG(str(_py));
+	PY(_py);
+	DLOG("Saving player on disconnect.");	
+}] call CBA_fnc_addEventHandler;
+
 
 /**
  * Restore unit
@@ -67,21 +80,28 @@ DLOG("EXPY " + str(_expyVersion) + " loaded.");
 ["ex_unit_create_post", {
     private ["_unit", "_var"];
     _unit = _this select 0;
-    if(isPlayer _unit) exitWith {};
+    //if(isPlayer _unit) exitWith {};
     _var = vehicleVarName _unit;
     if(_var == "") exitWith {
-        /*
+        
         _f = "";
         if(isPlayer _unit) then {
             _f = format["player_%1", getPlayerUID _unit];
-        } else {
-            _f = PY("ex.uuid()");
+        
+        	DLOG("VARNAME: " + str(_f));
+        	_unit setVehicleVarName _f;
+        	call compile format["%1 = _unit; publicVariable ""%1"";", _f];
         };
-        DLOG("VARNAME: " + str(_f));
-        _unit setVehicleVarName _f;
-        call compile format["%1 = _unit; publicVariable ""%1"";", _f];
-        */
     };
+    
+    if(!isPlayer _unit) then {
+            _v = _unit getVariable "pyjarma";
+            if(isNil "_v") then {
+           		_py = format["ex.preloadUnit('%1', '%2', '%3')", netid _unit, _var, typeOf _unit];
+           		PY(_py);
+	        };
+    };
+        
     //_str = format["ex.loadUnit('%1', '%2')", netid _unit, _var];
     //_res = PY(_str);
     //[_unit, "Unit"] spawn EX_fnc_DataUpdater;
@@ -157,19 +177,6 @@ EX_py_createUnit = {
 	
 };
 
-EX_fnc_RPY = {
-  	private ["_code"];
-  	_code = _this select 0;
-  
-    [{ ("Arma2Net.Unmanaged" callExtension format["py %1", _this]) }, _code, { isServer }] call EX_fnc_MPexec;  
-};
-
-EX_fnc_PY = {
-    private ["_code"];
-  	_code = _this select 0;
-
-    ("Arma2Net.Unmanaged" callExtension format["py %1", _code])
-};
 
 // spawn queue worker
 WORKER_QUEUE = [] call CBA_fnc_hashCreate;
@@ -178,6 +185,8 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 	waitUntil {
 		_next = PY("RVEngine.next()");
         if(_next != "0") then {
+            _s = str(_next);
+        	//DLOG(_s);
 	        //DLOG(_next);
             _next = call compile _next;
             //DLOG(_next);
@@ -208,11 +217,14 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 		                    _code = _this select 0;
 		                    _callback = _this select 1;
                             //DLOG(_code);
-                            
+                            if(isNil "_code") exitWith { DLOG("Nil code."); };
                             // damn CBA.
+                            _oc = _code;
                             _code = [_code, ",any", ",nil"] call CBA_fnc_replace;
-                            
-		                    _result = call compile _code;
+                            if(isNil "_code") exitWith { _str = format["Error in code: %1", _oc]; DLOG(_str); };
+                            //DLOG(str(_code));
+		                    _result = call compile format["%1", _code];
+                            _callback = "";
 		                    if(_callback == "") exitWith {};
 
 	                    	_py = format["%1('%2')", _callback, _result];
@@ -265,6 +277,7 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 
 // update units, vehicles, statics
 [] spawn {
+    if(true) exitWith {};
 	waitUntil { time > 0};
     
     	// load world.
@@ -274,20 +287,23 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 	      _unit = _this select 0;
 	      _key = _this select 1;
 	      _value = _this select 2;
-          DLOG("Updating " + str(_unit) + ", key: " + str(_key) + ", value: " + str(_value));
+          //DLOG("Updating " + str(_unit) + ", key: " + str(_key) + ", value: " + str(_value));
 	      _py = format["ex.getUnit('%1', '%2').%3 = '%4'", netid _unit, vehicleVarName _unit, _key, _value];
-          DLOG(str(_py));
-          PY(_py);  
+          //DLOG(str(_py));
+          //PY(_py);  
           sleep 0.01;
 	      
     	};    
 	waitUntil {
+        _time = time;
+        _frames = diag_frameno;
+        DLOG("Starting unit update");
       	{
-
+			
             _var = vehicleVarName _x;
             _netid = _x;
-            if(_var != "" and !isPlayer _x) then {
-            	
+            if(_var != "" and !isPlayer _x and local _x) then {
+            	/*
                 [_netid, "posATL", getPosATL _x] call _updateUnit;
                 [_netid, "posASL", getPosASL _x] call _updateUnit;
                 _loadout = [_x] call EX_fnc_getLoadOut;
@@ -300,11 +316,28 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
                 [_netid, "skill", skill _x] call _updateUnit;
                 [_netid, "alive", alive _x] call _updateUnit;
                 [_netid, "clazz", typeOf _x] call _updateUnit;
+				*/
+                _netid = netid _x;
+                _posATL = getPosATL _x;
+                _posASL = getPosASL _x;
+                _loadout = [_x] call EX_fnc_getLoadOut;
+                _damage = damage _x;
+                _anim = animationState _x;
+                _side = side _x;
+                _rank = rank _x;
+                _skill = skill _x;
+                _alive = alive _x;
+                _str = format["ex.updateUnit('%1', '%2', '%3', '%4', '%5', '%6', '%7', '%8', '%9', '%10', '%11')", _netid, _var, _posATL, _posASL, _loadout, _damage, _anim, _side, _rank, _skill, _alive];
+                _res = PY(_str);
+                //DLOG(_res);
             };
             sleep 0.01;
-        } foreach allUnits;
-      
-      	sleep 60;
+        } foreach allUnits + allDead;
+      	_took = time - _time;
+        _frames = diag_frameno - _frames;
+        _str = format["Update took %1 seconds, frames passed: %2", _took, _frames];
+        DLOG(_str);
+      	sleep 20;
         false;  
     };
 };

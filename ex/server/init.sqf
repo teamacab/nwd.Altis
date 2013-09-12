@@ -3,3 +3,6 @@
 #include "include\ex.h"
 
 COMPF("fnc\init.sqf");
+
+DLOG("Loading insurgency prototype.");
+call compileFinal preprocessFileLineNumbers "ex\prototype\insurgency\init.sqf";

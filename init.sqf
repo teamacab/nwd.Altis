@@ -1,5 +1,6 @@
-onPlayerConnected "[_id, _name] execVM ""ex\onPlayerConnected.sqf""";
-onPlayerDisconnected "[_id, _name] call compile preprocessFileLineNumbers ""ex\onPlayerDisconnected.sqf""";
+
+onPlayerConnected { [_id, _name] execVM "ex\onPlayerConnected.sqf" };
+onPlayerDisconnected { [_id, _name] call compile preprocessFileLineNumbers "ex\onPlayerDisconnected.sqf" };
 
 
 T_INIT = false;

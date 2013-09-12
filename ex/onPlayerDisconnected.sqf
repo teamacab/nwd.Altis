@@ -14,7 +14,7 @@ _name = _this select 1;
     if(_name == _n) exitWith {
         _str = format["Player %1 disconnected.", _x];
         DLOG(_str);
-      ["ex_network_opd", [_x]] call CBA_fnc_localEvent;  
+      ["ex_network_opd", [_x, getPlayerUID _x]] call CBA_fnc_localEvent;  
     };
   
 } foreach playableUnits;

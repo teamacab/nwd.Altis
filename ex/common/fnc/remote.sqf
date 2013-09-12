@@ -4,9 +4,9 @@
 "EX_RPC_CALL" addPublicVariableEventHandler {
 	private ["_code", "_arguments", "_localTo", "_callback", "_call"];
 	_code = PARAM(0, {});
-	_arguments = PARAM(1, { [] });
-	_localTo = PARAM(2, { nil }); // run everywhere if localTo is nil.
-	_callback = PARAM(3, { nil });
+	_arguments = PARAM(1, []);
+	_localTo = PARAM(2, nil); // run everywhere if localTo is nil.
+	_callback = PARAM(3, nil);
 	
 
 	switch(typeName _localTo) do {
@@ -26,7 +26,7 @@
 
 	
 	// call the code.
-	_call = _arguments call _code;
+	_call = _arguments call compile format["%1", _code];
 	
 	if(! isNil "_callback") then {
 		// send return value to callback variable
@@ -57,7 +57,7 @@ EX_fnc_MPexec = {
 	publicVariable "EX_RPC_CALL";
 	
 	if(_runLocal) then {
-		_call = _arguments call _code;
+		_call = _arguments call compile format["%1", _code];
 	};
 
 };

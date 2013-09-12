@@ -3,10 +3,27 @@
 #include "include\ex.h"
 #include "include\expy.h"
 
+EX_fnc_getLoadOut = compileFinal preprocessFileLineNumbers "ex\expy\ext\AEROSON_fnc_getLoadout.sqf";
+EX_fnc_setLoadOut = compileFinal preprocessFileLineNumbers "ex\expy\ext\AEROSON_fnc_setLoadout.sqf";
+EX_fnc_RPY = {
+  	private ["_code"];
+  	_code = _this select 0;
+  
+    [{ ("Arma2Net.Unmanaged" callExtension format["py %1", _this]) }, _code, { isServer }] call EX_fnc_MPexec;  
+};
+
+EX_fnc_PY = {
+    private ["_code"];
+  	_code = _this select 0;
+
+    ("Arma2Net.Unmanaged" callExtension format["py %1", _code])
+};
+
+
 EX_fnc_DataUpdater = {
    private ["_unit"];
-   _unit = PARAM(0, nil);
-   _func = PARAM(1, nil);
+   _unit = _this select 0;
+   _func = _this select 1;
    
 
    
@@ -65,6 +82,7 @@ EX_fnc_DataUpdater = {
             _str = _str + [format["ex.get%3('%1').side = '%2'", _sid, side _unit, _func]];
             _str = _str + [format["ex.get%3('%1').rank = '%2'", _sid, rank _unit, _func]];
             _str = _str + [format["ex.get%3('%1').skill = '%2'", _sid, skill _unit, _func]];
+            _str = _str + [format["ex.get%3('%1').varname = '%2'", _sid, vehicleVarName _unit, _func]];
             _str = _str + [format["ex.get%3('%1').variables = '%2'", _sid, _vars, _func]];
             //_str = _str + [format["ex.get%3('%1').update()", _sid, damage _unit, _func]];
             //DLOG(str(_str));

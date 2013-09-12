@@ -43,6 +43,8 @@ if(count _this < 4) then {
 	_data = loadout;
 	//playSound3D ["A3\Sounds_F\sfx\ZoomIn.wav", _target]; 
 };
+if(isNull _target) exitWith {};
+
 if(! local _target) exitWith {
     DLOG("Target " + str(_target) + " not local, executing on remote machine.");
     [{

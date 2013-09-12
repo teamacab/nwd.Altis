@@ -17,9 +17,14 @@ _list = allmissionobjects "Static" + allmissionobjects "Car" + allmissionobjects
 	DLOG(str(typeOf _x));
 } foreach _list;
 //hint format["res: %1", _result];
-
-_unit = (group player) createUnit["C_man_1", getPos player, [], 0, "none"];
-_unit setVehicleVarName "test0r0rssf";
+/*
+for "_i" from 0 to 144 do {
+    _side = EAST;
+_unit = (createGroup _side) createUnit["C_man_1", getPos player, [], 0, "none"];
+_unit setVehicleVarName format["%2_%1", _i, _side];
+_unit enableSimulation false;
+};
+    */
 /*
 _str = format["getUnit('%1').to_sqf", netid player];
 _result = [_str, []] call EX_py_call;
