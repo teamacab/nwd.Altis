@@ -56,10 +56,10 @@
 
 #define ANIM_HANDCUFF "amovpknlmstpsnonwnondnon"
 
-#define GUER_UNITS [resistance, "man"] call AVD_fnc_lists_get
-#define BLUE_UNITS [west, "man"] call AVD_fnc_lists_get
-#define CIV_UNITS [civilian, "man"] call AVD_fnc_lists_get
-#define RED_UNITS [east, "man"] call AVD_fnc_lists_get
+#define GUER_UNITS [resistance, "man"] call EX_fnc_lists_get
+#define BLUE_UNITS [west, "man"] call EX_fnc_lists_get
+#define CIV_UNITS [civilian, "man"] call EX_fnc_lists_get
+#define RED_UNITS [east, "man"] call EX_fnc_lists_get
 
 
 #define SHIP_WRECKS ["Land_Wreck_Traw_F", "Land_Wreck_Traw2_F", "Land_UWreck_MV22_F", "Land_UWreck_FishingBoat_F"]
