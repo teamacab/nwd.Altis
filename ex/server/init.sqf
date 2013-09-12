@@ -5,4 +5,4 @@
 COMPF("fnc\init.sqf");
 
 DLOG("Loading insurgency prototype.");
-call compileFinal preprocessFileLineNumbers "ex\prototype\insurgency\init.sqf";
+execVM "ex\prototype\insurgency\init.sqf";

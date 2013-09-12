@@ -78,6 +78,9 @@ DLOG("EXPY " + str(_expyVersion) + " loaded.");
  * Restore unit
  */
 ["ex_unit_create_post", {
+    
+
+    
     private ["_unit", "_var"];
     _unit = _this select 0;
     //if(isPlayer _unit) exitWith {};
@@ -223,7 +226,7 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
                             _code = [_code, ",any", ",nil"] call CBA_fnc_replace;
                             if(isNil "_code") exitWith { _str = format["Error in code: %1", _oc]; DLOG(_str); };
                             //DLOG(str(_code));
-		                    _result = call compile format["%1", _code];
+		                    _result = [_code] call EX_fnc_call;
                             _callback = "";
 		                    if(_callback == "") exitWith {};
 

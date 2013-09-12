@@ -83,22 +83,22 @@ if(typeName _vehRatio == "ARRAY")then{
 };
 _allUnitsArray = [];
 
-_blueMenArray = [west, "man"] call AVD_fnc_lists_get;
-_redMenArray = [east, "man"] call AVD_fnc_lists_get;
-_yellowMenArray = [civilian, "man"] call AVD_fnc_lists_get;
+_blueMenArray = [west, "man"] call EX_fnc_lists_get;
+_redMenArray = [east, "man"] call EX_fnc_lists_get;
+_yellowMenArray = [civilian, "man"] call EX_fnc_lists_get;
 
-_blueCarArray = [west, "car"] call AVD_fnc_lists_get;
-_redCarArray = [east, "car"] call AVD_fnc_lists_get;
-_yellowCarArray = [civilian, "car"] call AVD_fnc_lists_get;
+_blueCarArray = [west, "car"] call EX_fnc_lists_get;
+_redCarArray = [east, "car"] call EX_fnc_lists_get;
+_yellowCarArray = [civilian, "car"] call EX_fnc_lists_get;
 
 switch (_sideOption) do { 
-    case 1: {
+    case WEST: {
         _milHQ = createCenter west;
 		if(isNil("_milGroup"))then{_milGroup = createGroup west;}else{_milGroup = _milGroup;};
         _menArray = _blueMenArray;
         _vehArray = _blueCarArray;
     }; 
-    case 2: {
+    case EAST: {
         _milHQ = createCenter east;
         if(isNil("_milGroup"))then{_milGroup = createGroup east;}else{_milGroup = _milGroup;};
         _menArray = _redMenArray;
@@ -145,7 +145,7 @@ if(_vehicles)then{
         _sPos = [(_centerPos select 0) + (sin _dir) * _range, (_centerPos select 1) + (cos _dir) * _range, 0];
 		
         //_pos = _sPos findEmptyPosition[10, 300, _unitType];
-        _road = [_centerPos, random _radius] call AVD_fnc_getDistantRoad;
+        _road = [_centerPos, random _radius] call EX_fnc_getDistantRoad;
         /*_rl = _centerPos nearRoads _radius;
         _rl = [_rl] call CBA_fnc_shuffle;
         _road = _rl select 0;*/

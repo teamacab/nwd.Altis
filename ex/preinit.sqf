@@ -66,6 +66,7 @@ EX_fnc_lists_add = {
   DLOG("added " + str(_val) + " to list " + str(_type) + " for " + str(_side));
   true;   
 };
+
 EX_fnc_lists_getRandom = {
     private ["_side", "_type", "_hash", "_list", "_random", "_ret"];
     _side = PARAM(0, civilian);
@@ -118,6 +119,11 @@ for "_i" from 0 to (count _cfgVehicles)-1 do {
         };
       };
       _hasDriver = getNumber(_c >> "hasDriver");
+      _displayName = getText(_c >> "displayName");
+      _scope = getNumber(_c >> "scope");
+      if(_scope < 1) exitWith { DLOG("SKIPPING " + str(_displayName)); };
+      DLOG(_displayName);
+      if(_displayName == "") exitWith {};
 	  if(_hasDriver == 1 and _fuelCap == 0 and !(_cName isKindOf "Man")) exitWith {}; // ignore erstmal.
       // cars:
 

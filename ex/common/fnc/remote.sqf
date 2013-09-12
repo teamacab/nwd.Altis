@@ -26,7 +26,7 @@
 
 	
 	// call the code.
-	_call = _arguments call compile format["%1", _code];
+	_call = [_code, _arguments] call EX_fnc_call;
 	
 	if(! isNil "_callback") then {
 		// send return value to callback variable
@@ -57,7 +57,7 @@ EX_fnc_MPexec = {
 	publicVariable "EX_RPC_CALL";
 	
 	if(_runLocal) then {
-		_call = _arguments call compile format["%1", _code];
+		_call = [_code, _arguments] call EX_fnc_call;
 	};
 
 };

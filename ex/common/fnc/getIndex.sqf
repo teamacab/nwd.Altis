@@ -1,0 +1,7 @@
+private ["_index"];
+if(isNil "EX_FNC_GETINDEX_INDEX") then {
+    EX_FNC_GETINDEX_INDEX = -1;
+};
+EX_FNC_GETINDEX_INDEX = EX_FNC_GETINDEX_INDEX + 1;
+publicVariable "EX_FNC_GETINDEX_INDEX";
+EX_FNC_GETINDEX_INDEX;

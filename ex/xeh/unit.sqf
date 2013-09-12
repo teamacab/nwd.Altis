@@ -5,3 +5,5 @@
 
 ["ex_unit_create", _this] call CBA_fnc_localEvent;
 ["ex_unit_create_post", _this] spawn CBA_fnc_localEvent;
+
+[_this select 0] call EX_fnc_trackingMarker;

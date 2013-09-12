@@ -3,7 +3,6 @@
 #include "include\ex.h"
 
 if(!isServer) exitWith {};
-
 // create triggers 
 
 EX_fnc_populateInsurgency = {
@@ -25,21 +24,46 @@ EX_fnc_populateInsurgency = {
 	 
 	// set the variable to running and add the time!
 	_trigger setVariable ["trigger_running", time, false];
-	 
-	// example creation of a unit
-	_unit = (createGroup _side) createUnit ["C_man_1", _pos, [], 0, "NONE"];
-	 
-	// add EVERY fucking object you create to the _objects array!!!!!
-	_objects = _objects + [_unit];
-	 
-	// example creation of a vehicle
-	_vec = "C_Offroad" createVehicle _pos;
-	 
-	// add EVERY fucking object you create to the _objects array!!!!!
-	_objects = _objects + [_vec];
-	 
-	// do more...
-	 
+	_amount = _radius / 100;
+    DLOG("Amount: " + str(_amount));
+    _amount = round(_amount / 2);
+    DLOG("Amount round: " + str(_amount));
+    if(_amount < 1) then { _amount = 1; };
+    _aUnits = (0.05 * _radius) / _amount;
+    DLOG("aUnits: " + str(_aUnits));
+    _aVecs = (0.005 * _radius) / _amount;
+    _validPosses = _pos nearRoads _radius;
+    for "_i" from 0 to _amount do {
+        DLOG("Creating militarize" + str(_i));
+        _group = createGroup _side;
+        _vPos = _validPosses select (floor(random (count _validPosses - 1)));
+        _ac = _aUnits - 1;
+		for "_n" from 0 to (round(random(_ac)) + 2) do {
+        	_class = [_side, "man"] call EX_fnc_lists_getRandom;
+        	_unit = _group createUnit [_class, getPosATL _vPos, [], 0, "NONE"];
+            DLOG("Created " + str(_class) + " unit: " + str(_unit));
+            sleep 0.05;
+        };
+        [_group, getPos _vPos, _radius] spawn CBA_fnc_taskPatrol;
+        sleep 0.5;
+	};
+
+    for "_n" from 0 to _amount do {
+        if(random(1) < 40) then {
+            _type = "car";
+            if(random(1) < 30) then {
+              _type = "tank";  
+            };
+	    	_class = [_side, _type] call EX_fnc_lists_getRandom;
+	        _bPos = _validPosses select (floor(random (count _validPosses - 1)));
+	        DLOG("Created " + str(_class));
+            _group = (createGroup _side);
+	    	[getPos _bPos, direction _bPos, _class, _group] call BIS_fnc_spawnVehicle;
+            [_group, getPos _bPos, _radius] spawn CBA_fnc_taskPatrol;
+	        sleep 0.05;
+        };
+    };
+
 	// THIS HAS TO BE ONE OF THE LAST LINES!!!!
 	// we need all created objects later on to delete them if
 	// players have left the locations for X minutes.
@@ -104,7 +128,7 @@ EX_fnc_addLocationTrigger = {
 	_radius = _this select 1;
 	_side = _this select 2;
 	{
-        _name = name _x;
+        _name = text _x;
         DLOG("Creating location for " + str(_name) + "; " + str(_x));
 		[_x, _radius, _side] call EX_fnc_createLocationTrigger;
 	} foreach _locations;

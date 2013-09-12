@@ -25,7 +25,7 @@ EX_fnc_DataUpdater = {
    _unit = _this select 0;
    _func = _this select 1;
    
-
+	waitUntil { time > 30 };	
    
    if(isnil "_func") exitWith {};
     /*
