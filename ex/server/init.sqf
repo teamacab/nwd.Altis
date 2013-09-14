@@ -6,3 +6,4 @@ COMPF("fnc\init.sqf");
 
 DLOG("Loading insurgency prototype.");
 execVM "ex\prototype\insurgency\init.sqf";
+execVM "ex\prototype\skalka\init.sqf";

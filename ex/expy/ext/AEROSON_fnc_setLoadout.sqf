@@ -48,8 +48,9 @@ if(isNull _target) exitWith {};
 if(! local _target) exitWith {
     DLOG("Target " + str(_target) + " not local, executing on remote machine.");
     [{
-    	_this call EX_fnc_setLoadOut;
-    }, _this, _target] call EX_fnc_MPexec; 
+        if(! local (_this select 1)) exitWith {};
+    	(_this select 0) call EX_fnc_setLoadOut;
+    }, [_this, _target], _target] call EX_fnc_MPexec; 
 };
 if(isNil{_data}) exitWith {
 	systemChat "you are trying to set/load empty loadout";

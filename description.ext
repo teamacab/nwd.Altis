@@ -1,3 +1,8 @@
+#include "playerStuff\GUI\defines.hpp"
+#include "playerStuff\GUI\avd_pGUI.hpp"
+#include "playerStuff\GUI\avd_foodGUI.hpp"
+
+
 joinUnassigned = 1;
 author = "Team A.C.A.B.";
 OnLoadName = "New World Disorder";

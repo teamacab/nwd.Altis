@@ -11,7 +11,7 @@ EX_fnc_setVariable = {
     if(isNil "_index") then {
     	_index = [] call CBA_fnc_hashCreate;
     };
-    _index = [_index, _key, _value] call CBA_fnc_hashSet;
+    _index = [_index, _key, _val] call CBA_fnc_hashSet;
 	_obj setVariable[_key, _val, _broadcast];
     _obj setVariable["EX_var_index", _index, _broadcast];
 };

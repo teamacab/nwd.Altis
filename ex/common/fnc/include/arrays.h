@@ -8,7 +8,7 @@
 #define x_isTower(obj) (typeOf obj in TOWERS)
 
 #define CIVILIAN_HOUSES ["Land_i_Stone_HouseSmall_V1_F", "Land_i_Stone_Shed_V1_F", "Land_i_Stone_HouseBig_V1_F", "Land_Slum_House03_F", "Land_Slum_House01_F", "Land_Slum_House02_F", "Land_i_House_Big_02_V1_F", "Land_i_House_Big_01_V1_F", "Land_i_House_Small_03_V1_F", "Land_i_House_Small_01_V2_F", "Land_u_House_Small_02_V1_F", "Land_Lighthouse_small_F"]
-#define SHOP_HOUSES ["Land_i_Shop_01_V1_F", "Land_i_Shop_02_V1_F"] 
+#define SHOP_HOUSES ["Land_i_Shop_01_V1_F", "Land_i_Shop_02_V1_F"]
 
 #define GARAGE_HOUSES ["Land_i_Garage_V1_F"]
 
@@ -31,24 +31,24 @@
 #define SPAWN_HOLDER "GroundWeaponHolder"
 #define TREASURE_HOLDER "GroundWeaponHolder"
 
-#define NORMAL_SPAWN [["hgun_P07_F", 0.4], ["V_BandollierB_cbr", 0.6], ["U_B_CombatUniform_mcam_tshirt", 0.25], ["U_O_CombatUniform_ocamo", 0.25], ["hgun_ACPC2_F", 0.3], ["16Rnd_9x21_Mag", 0.75], ["ACRE_PRC148_UHF", 0.2]]
+#define NORMAL_SPAWN [["9Rnd_45ACP_Mag", 0.4], ["hgun_ACPC2_F", 0.3], ["sc_lighter", 0.5], ["ACRE_PRC148_UHF", 0.2], ["sc_bedroll", 0.5], ["ToolKit", 0.5], ["sc_knife", 0.1]]
 
-#define RARE_SPAWN [["ARP_Objects_smartphone_m", 0.1], ["ARP_Objects_Toughbook_M", 0.1], ["G_Diving", 0.5], ["30Rnd_65x39_caseless_mag", 0.4], ["20Rnd_762x51_Mag", 0.3], ["V_HarnessOGL_brn", 0.05], ["U_B_Wetsuit", 0.07], ["ARP_Objects_satbag_m", 0.1], ["1Rnd_HE_Grenade_shell", 0.2], ["ItemGPS", 0.01], ["HandGrenade", 0.3], ["arifle_MX_GL_F", 0.2], ["B_Carryall_oucamo", 0.15], ["srifle_EBR_F", 0.1], ["ACRE_PRC119", 0.03], ["NVGoggles", 0.01], ["V_RebreatherB", 0.02]]
+#define RARE_SPAWN [["ItemGPS", 0.01], ["HandGrenade", 0.3], ["ACRE_PRC119", 0.03], ["NVGoggles", 0.01], ["sc_knife", 0.5]]
 
-#define MONEY_SPAWN [["ARP_Objects_moneya_m", 0.75, 5], ["ARP_Objects_moneya_m", 0.5, 10], ["ARP_Objects_moneya_m", 0.3, 50], ["ARP_Objects_moneya_m", 0.1, 100]]
+#define MONEY_SPAWN ["sc_money"]
 
 #define LOW_CONSUME_ANIMATIONS [["amovpercmstpsnonwnondnon", "amovpercmwlksnonwnondf"], 0.025]
 #define MID_CONSUME_ANIMATIONS [["amovpercmrunsnonwnondf"], 0.1]
 #define HIGH_CONSUME_ANIMATIONS [["amovpercmevasnonwnondf"], 0.25]
 #define CONSUME_LISTS [LOW_CONSUME_ANIMATIONS, MID_CONSUME_ANIMATIONS, HIGH_CONSUME_ANIMATIONS]
 
-#define DRINK_CLASSES ["ARP_Objects_waterbottle_m", "ARP_Objects_water_m"]
+#define DRINK_CLASSES ["sc_waterbottle","sc_soda","sc_juicebox","sc_energy_drink","sc_beer","sc_coffee"]
 
-#define DRINK_SPAWN [["ARP_Objects_waterbottle_m", 0.8], ["ARP_Objects_waterbottle_m", 0.3, 6]]
+#define DRINK_SPAWN [["sc_waterbottle", 0.8], ["sc_soda", 0.3], ["sc_juicebox", 0.3], ["sc_energy_drink", 0.3], ["sc_beer", 0.3], ["sc_coffee", 0.3]]
 
-#define FOOD_SPAWN [["ARP_Objects_mre_m", 1]]
+#define FOOD_SPAWN [["sc_cookedmeat",0.5],["sc_mre",0.5],["sc_donut",0.5],["sc_chips",0.5],["sc_carrot",0.5],["sc_cannedfood",0.5];]
 
-#define FOOD_CLASSES ["ARP_Objects_mre_m"] 
+#define FOOD_CLASSES ["sc_cookedmeat","sc_mre","sc_donut","sc_chips","sc_carrot","sc_cannedfood"]
 
 #define EXCLUDE ["PaperCar", "O_APC_Wheeled_02_base_F", "Civilian", "Civilian_F", "Officer_soldier", "SoldierEB"]
 

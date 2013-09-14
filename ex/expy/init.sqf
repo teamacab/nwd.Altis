@@ -47,16 +47,30 @@ DLOG("EXPY " + str(_expyVersion) + " loaded.");
  */
 ["ex_network_opc", {
 	if(!isServer) exitWith {};
-	private ["_player"];
-	_player = _this select 0;
-    if(isNil "_player" or isNull _player) exitWith { DLOG("Nil or Null player."); };
-	_py = format["ex.loadPlayer('%2', '%1')", getPlayerUID _player, netid _player];
-	[_py] call EX_fnc_PY;    
-	[{
-        DLOG("Starting DataUpdater");
-        [_this, "Player"] spawn EX_fnc_DataUpdater;
-    }, _player, _player] call EX_fnc_MPexec;
-    
+    _this spawn {
+        DLOG("_this: " + str(_this));
+		private ["_player"];
+		_player = _this select 0;
+        _f = format["player_%1", getPlayerUID _player];
+    	DLOG("VARNAME: " + str(_f));
+    	_player setVehicleVarName _f;
+    	call compile format["%1 = _player; publicVariable ""%1"";", _f];
+        
+        [{
+            
+            (_this select 0) setVehicleVarName (_this select 1);
+        }, [_player, _f]] call EX_fnc_MPexec;
+        
+	    if(isNil "_player" or isNull _player) exitWith { DLOG("Nil or Null player."); };
+		_py = format["ex.loadPlayer('%2', '%1', '%3')", getPlayerUID _player, netid _player, _f];
+		[_py] call EX_fnc_PY;    
+		/*[{
+            DLOG("_this: " + str(_this));
+	        if(! local _this) exitWith { DLOG("Not my playground."); };
+	        DLOG("Starting DataUpdater");
+	        [_this, "Player"] spawn EX_fnc_DataUpdater;
+	    }, _player] call EX_fnc_MPexec;*/
+    };
 	
 }] call CBA_fnc_addEventHandler;
 
@@ -200,51 +214,72 @@ WORKER_QUEUE = [] call CBA_fnc_hashCreate;
 		        _cmd = _spl select 1;
 		        _line = _spl select 2;
 		        _callback = "";
-               
+               	
 		        switch(_cmd) do {
 		        	case '\x00': {
 		                // begin
 		                _callback = _line;
-		                [WORKER_QUEUE, _tid, []] call CBA_fnc_hashSet;
+                        _hsh = [] call CBA_fnc_hashCreate;
+                        [_hsh, "callback", _callback] call CBA_fnc_hashSet;
+                        
+		                [WORKER_QUEUE, _tid, _hsh] call CBA_fnc_hashSet;
 		            };
+                    case '\x05': {
+                      	_hsh = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
+                        [_hsh, "localTo", _line] call CBA_fnc_hashSet;
+		                [WORKER_QUEUE, _tid, _hsh] call CBA_fnc_hashSet;
+                    };
 		            case '\x01': {
 		                // end
                        // DLOG("END!!!");
-		                _list = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
-		                _code = [_list, ""] call CBA_fnc_join;
-                        //DLOG(_code);
-                       
-		                [_code, _callback] spawn {
-                            //DLOG(str(_this));
-		                	private ["_code", "_callback", "_result", "_py"];
-		                    _code = _this select 0;
-		                    _callback = _this select 1;
-                            //DLOG(_code);
-                            if(isNil "_code") exitWith { DLOG("Nil code."); };
-                            // damn CBA.
-                            _oc = _code;
-                            _code = [_code, ",any", ",nil"] call CBA_fnc_replace;
-                            if(isNil "_code") exitWith { _str = format["Error in code: %1", _oc]; DLOG(_str); };
-                            //DLOG(str(_code));
-		                    _result = [_code] call EX_fnc_call;
-                            _callback = "";
-		                    if(_callback == "") exitWith {};
+		                _hsh = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
+                        _list = [_hsh, "code"] call CBA_fnc_hashGet;
+						_localTo = [_hsh, "localTo"] call CBA_fnc_hashGet;
+                        if(isNil "_localTo") then { _localTo = "false"; };
+                        _localTo = call compile _localTo;
+		                _code = [_list, " "] call CBA_fnc_join;
+                        if(isNil "_code") exitWith { DLOG("Nil code."); };
+                        DLOG(_code);
+                       	
+                   	
+                        // damn CBA.
+                        _oc = _code;
+                        _cc = [_code, ",any"] call CBA_fnc_find;
+                        if(_cc != -1) then { 
+                        	_code = [_code, ",any", ",nil"] call CBA_fnc_replace;
+                        };
+                        if(isNil "_code") exitWith {};
+                        DLOG(str(_code));
+                        DLOG("Running on: " + str(_localTo) +  "tn: " + str(typeName _localTo));
+	                    [_code, "BIS_fnc_spawn", _localTo, false] call BIS_fnc_MP;
+                        //_r = [_code] call EX_fnc_call;
+                        
+                        
+                        
+                        _callback = "";
+	                    if(_callback == "") exitWith {};
 
-	                    	_py = format["%1('%2')", _callback, _result];
-							//DLOG("Sending callback");c
-							PY(_py);  
+                    	_py = format["%1('%2')", _callback, _r];
+						//DLOG("Sending callback");c
+						PY(_py);  
 
-		                };
+	                
                        	//DLOG(str(_tid) + " executed.");
 		                [WORKER_QUEUE, _tid, nil] call CBA_fnc_hashSet;
 		            };
 		            
 		            case '\x18': {
 		            	// add to queue  
-		                _list = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
+		                _hsh = [WORKER_QUEUE, _tid] call CBA_fnc_hashGet;
+                        _list = [_hsh, "code"] call CBA_fnc_hashGet;
+                        if(isNil "_list") then { _list = []; };
 		                _list = _list + [_line];
-		                [WORKER_QUEUE, _tid, _list] call CBA_fnc_hashSet;
+                        [_hsh, "code", _list] call CBA_fnc_hashSet;
+		                [WORKER_QUEUE, _tid, _hsh] call CBA_fnc_hashSet;
 		            };
+                    default {
+                      DLOG("UNKNOWN CODE: " + str(_cmd));  
+                    };
 		                
 		        };
 	        };

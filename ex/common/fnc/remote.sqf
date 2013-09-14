@@ -7,7 +7,7 @@
 	_arguments = PARAM(1, []);
 	_localTo = PARAM(2, nil); // run everywhere if localTo is nil.
 	_callback = PARAM(3, nil);
-	
+	if(isNil "_arguments") then { _arguments = []; };
 
 	switch(typeName _localTo) do {
       case "OBJECT": {
@@ -51,11 +51,16 @@ EX_fnc_MPexec = {
 	_arguments = PARAM(1, []);
 	_localTo = PARAM(2, false);
 	_callback = PARAM(3, false);
-	_runLocal = PARAM(4, true);
+	_runLocal = PARAM(4, false);
 	_ret = nil;
+    [[_arguments, _code],"BIS_fnc_spawn",_localTo,false] spawn BIS_fnc_MP;
+    
+    if(true) exitWith {};
+    
 	EX_RPC_CALL = [_code, _arguments, _localTo, _callback];
 	publicVariable "EX_RPC_CALL";
 	
+    
 	if(_runLocal) then {
 		_call = [_code, _arguments] call EX_fnc_call;
 	};

@@ -6,6 +6,14 @@ waitUntil { T_INIT };
 
 removeAllItems player;
 removeAllWeapons player;
+removeAllAssignedItems player;
+DLOG("Starting DataUpdater");
+[player, "Player"] spawn EX_fnc_DataUpdater;
+//player addAction ["Run debug code.", "ex\debug_code.sqf"];
 
+player addAction ["Playermenu", {
+    createDialog "avd_pGUI";
+}];
 
-player addAction ["Run debug code.", "ex\debug_code.sqf"];
+execVM "playerStuff\addActionGatherWood.sqf";
+execVM "playerStuff\addActionEviscerate.sqf";
